@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <!-- Google tag (gtag.js) — com Consent Mode v2: nada é rastreado antes do aceite (LGPD) -->
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', {
+        analytics_storage: 'denied', ad_storage: 'denied',
+        ad_user_data: 'denied', ad_personalization: 'denied',
+        wait_for_update: 500
+    });
+    try {
+        var c = JSON.parse(localStorage.getItem('acrilife_consentimento'));
+        if (c && c.v === 1) gtag('consent', 'update', {
+            analytics_storage: c.analytics ? 'granted' : 'denied',
+            ad_storage: c.marketing ? 'granted' : 'denied',
+            ad_user_data: c.marketing ? 'granted' : 'denied',
+            ad_personalization: c.marketing ? 'granted' : 'denied'
+        });
+    } catch (e) {}
+    gtag('js', new Date());
+    gtag('config', 'G-28GDC9K6KL');
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-28GDC9K6KL"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1e4a7e">
+    <meta name="color-scheme" content="light only">
+    <title>AcriLife - Produtos em Acrílico Personalizados | São Paulo</title>
+    <meta name="description" content="Especialistas em produtos de acrílico personalizados. Qualidade premium e inovação desde 2025.">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="AcriLife - Produtos em Acrílico Personalizados">
+    <meta property="og:description" content="Especialistas em produtos de acrílico personalizados. Qualidade e inovação.">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:image" content="https://svirnutlsmybvvuyctak.supabase.co/storage/v1/object/public/imagens/site/AcrilifeLogoCompleta.png">
+    <meta name="twitter:card" content="summary_large_image">
+    
+    <!-- Favicons (O JS preenche o href automaticamente via Supabase) -->
+    <link rel="icon" type="image/png" sizes="32x32" href="#">
+    <link rel="icon" type="image/png" sizes="16x16" href="#">
+    <link rel="apple-touch-icon" sizes="180x180" href="#">
+    
+    <!-- Estilos e Fontes -->
+    <link rel="preconnect" href="https://svirnutlsmybvvuyctak.supabase.co" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="style.css?v=7">
+    <link rel="stylesheet" href="comum.css?v=4">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Scripts Principais -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js" defer></script>
+    <script src="script.js?v=4" defer></script>
+    <script src="cookies.js?v=2" defer></script>
+</head>
+
+<body>
+    <!-- Header & Nav -->
+    <header>
+        <nav class="navbar">
+            <div class="container nav-container">
+                <!-- Logo -->
+                <div class="logo">
+                    <a href="index.html" class="logo-link" aria-label="AcriLife">
+                        <div id="logo-imagem-wrapper" class="logo-imagem-wrapper"></div>
+                        <div id="logo-fallback" class="logo-fallback"><span class="logo-fallback-text">Acri<em>Life</em></span></div>
+                    </a>
+                </div>
+
+                <!-- Menu e Busca -->
+                <div class="nav-right">
+                    <ul class="nav-menu">
+                        <li><a href="#home">Início</a></li>
+                        <li><a href="#galeria">Galeria</a></li>
+                        <li><a href="#produtos">Produtos</a></li>
+                        <li><a href="#sobre">Sobre</a></li>
+                        <li><a href="#contato">Contato</a></li>
+                    </ul>
+                    
+                    <div class="search-container">
+                        <div class="search-box">
+                            <input type="search" id="search-input" placeholder="Buscar produtos..." autocomplete="off" aria-label="Buscar produtos">
+                            <button id="search-btn" aria-label="Buscar"><i class="fas fa-search"></i></button>
+                            <div id="search-results" class="search-results"></div>
+                        </div>
+                    </div>
+
+                    <button id="mobile-search-toggle" class="mobile-search-toggle" aria-label="Abrir busca" aria-expanded="false"><i class="fas fa-search"></i></button>
+                    
+                    <button id="hamburger" class="hamburger" aria-label="Abrir menu" aria-expanded="false">
+                        <span></span><span></span><span></span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Busca Mobile -->
+        <div id="mobile-search-bar" class="mobile-search-bar">
+            <input type="search" id="mobile-search-input" placeholder="Buscar produtos..." autocomplete="off" aria-label="Buscar produtos">
+            <button id="mobile-search-btn" aria-label="Buscar"><i class="fas fa-search"></i></button>
+        </div>
+        <div id="mobile-search-results" class="mobile-search-results"></div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div id="hero-banner" class="hero-banner-container">
+            <div class="hero-overlay"></div>
+        </div>
+        
+        <div class="container hero-inner">
+            <div class="hero-content">
+                <span class="hero-eyebrow">Acrílico • LED • Comunicação visual</span>
+                <h1>Onde o <span class="highlight">acrílico</span> ganha forma e o LED ganha vida</h1>
+                <p>Desde 2025, damos forma e luz a projetos em acrílico e LED, criando peças personalizadas que unem estética, funcionalidade e excelência em cada detalhe.</p>
+                <div class="hero-buttons">
+                    <a href="#galeria" class="btn">Ver Galeria</a>
+                    <a href="#contato" class="btn-secondary" data-whatsapp target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> Solicitar Orçamento</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Galeria -->
+    <section class="galeria" id="galeria">
+        <div class="container">
+            <h2 class="section-title">Nossos Trabalhos</h2>
+            <p class="section-subtitle">Explore nossa galeria de produtos em acrílico personalizados. Cada peça é única e fabricada com precisão.</p>
+            
+            <div id="categorias-filtros" class="galeria-filtros"></div>
+            
+            <div id="galeria-grid" class="galeria-grid" aria-live="polite">
+                <div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Produtos -->
+    <section class="produtos" id="produtos">
+        <div class="container">
+            <h2 class="section-title">Categorias</h2>
+            <p class="section-subtitle">Escolha uma linha de produtos para ver todos os trabalhos dela na galeria.</p>
+            <div id="produtos-grid" class="produtos-grid">
+                <div class="loading-produtos"><i class="fas fa-spinner fa-spin"></i><p>Carregando produtos...</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sobre -->
+    <section class="sobre" id="sobre">
+        <div class="container">
+            <h2 class="section-title">Sobre a AcriLife</h2>
+            <div class="sobre-content">
+                <div class="sobre-text">
+                    <p>Na <strong>Acrilife</strong>, qualidade é o nosso padrão. Utilizamos exclusivamente matéria-prima de primeira linha, selecionada com rigor para garantir desempenho e durabilidade superiores.</p>
+                    <p>Adotamos um processo de produção moderno e altamente controlado, onde cada etapa é executada com precisão assegurando excelência e acabamento impecável.</p>
+                    
+                    <div class="sobre-destaques">
+                        <div class="destaque"><i class="fas fa-award"></i><h3>Qualidade</h3><p>Matéria-prima de primeira linha.</p></div>
+                        <div class="destaque"><i class="fas fa-users"></i><h3>Atendimento</h3><p>Atenção especial em cada detalhe.</p></div>
+                        <div class="destaque"><i class="fas fa-shipping-fast"></i><h3>Agilidade</h3><p>Prazos otimizados para encomendas.</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contato -->
+    <section class="contato" id="contato">
+        <div class="container">
+            <h2 class="section-title">Entre em Contato</h2>
+            <div class="contato-info-modern">
+                <h3>Vamos conversar sobre seu projeto!</h3>
+                <p class="contato-sub">Envie sua ideia, medidas ou referência e receba um orçamento sem compromisso.</p>
+                <div class="contato-cta"><a href="#" class="btn btn-whatsapp" data-whatsapp target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> Pedir orçamento pelo WhatsApp</a></div>
+                <div class="contato-grid">
+                    <div class="contato-item"><i class="fas fa-map-marker-alt"></i><div><strong>Endereço</strong><p id="contato-endereco">...</p></div></div>
+                    <div class="contato-item"><i class="fas fa-phone"></i><div><strong>Telefone</strong><p id="contato-telefone">...</p></div></div>
+                    <div class="contato-item"><i class="fas fa-envelope"></i><div><strong>E-mail</strong><p id="contato-email">...</p></div></div>
+                    <div class="contato-item"><i class="fas fa-clock"></i><div><strong>Horário</strong><p id="contato-horario">...</p></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section footer-brand">
+                    <h3>AcriLife</h3>
+                    <p>Peças únicas em acrílico e LED, com qualidade premium.</p>
+                    <div id="social-links" class="social-links">
+                        <a href="#" aria-label="Facebook" target="_blank" rel="noopener"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Instagram" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="WhatsApp" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <nav class="footer-section footer-nav" aria-label="Links do rodapé">
+                    <h3>Navegação</h3>
+                    <ul>
+                        <li><a href="index.html#home">Início</a></li>
+                        <li><a href="index.html#galeria">Galeria</a></li>
+                        <li><a href="index.html#produtos">Categorias</a></li>
+                        <li><a href="index.html#sobre">Sobre</a></li>
+                        <li><a href="index.html#contato">Contato</a></li>
+                    </ul>
+                </nav>
+                <div class="footer-section">
+                    <h3>Contato</h3>
+                    <div id="footer-contato"></div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; <span id="ano-atual"></span> AcriLife · CNPJ 51.819.182/0001-68</p>
+                <ul class="footer-legal">
+                    <li><a href="privacidade.html">Política de Privacidade</a></li>
+                    <li><a href="termos.html">Termos de Uso</a></li>
+                    <li><button type="button" class="link-cookies" data-abrir-cookies>Preferências de cookies</button></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Flutuante -->
+    <a href="#contato" id="whatsapp-float" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Falar no WhatsApp"><i class="fab fa-whatsapp"></i></a>
+
+</body>
+</html>

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="only light">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Acrilife — Painel Administrativo</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Supabase JS v2 & Scripts de Configuração -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+    <script src="config.js?v=5"></script>
+    <script src="auth-guard.js?v=6"></script>
+
+    <!-- Estilos -->
+    <link rel="stylesheet" href="admin-style.css?v=6">
+
+    <!-- Favicon (Dinâmico via JS) -->
+    <link rel="icon" type="image/png" id="dynamic-favicon" href="">
+    <link rel="apple-touch-icon" id="dynamic-apple-icon" href="">
+</head>
+
+<body class="admin-body">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <div class="logo-icon" id="sidebar-logo-icon">
+                    <i class="fas fa-gem logo-fallback-icon"></i>
+                </div>
+                <div class="logo-text-wrapper" aria-hidden="true">
+                    <h2>Acri<span>Life</span> Admin</h2>
+                </div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav" role="navigation" aria-label="Menu principal">
+            <div class="nav-section">
+                <h3>PRINCIPAL</h3>
+                <ul>
+                    <li class="nav-item active" data-page="dashboard"><a href="#dashboard"><i class="fas fa-chart-line"></i><span>Dashboard</span></a></li>
+                    <li class="nav-item" data-page="produtos"><a href="#produtos"><i class="fas fa-box"></i><span>Produtos</span></a></li>
+                    <li class="nav-item" data-page="categorias"><a href="#categorias"><i class="fas fa-tags"></i><span>Categorias</span></a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3>CONFIGURAÇÕES</h3>
+                <ul>
+                    <li class="nav-item" data-page="configuracoes"><a href="#configuracoes"><i class="fas fa-store"></i><span>Empresa</span></a></li>
+                    <li class="nav-item" data-page="integracao"><a href="#integracao"><i class="fas fa-plug"></i><span>Integração</span></a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a class="sidebar-site-link" id="link-ver-site" href="#" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i><span>Ver site público</span></a>
+            <div class="quick-actions">
+                <button class="btn-quick-action" onclick="abrirModalCategoria()" title="Nova Categoria"><i class="fas fa-plus"></i></button>
+                <button class="btn-quick-action" onclick="abrirModalProduto()" title="Novo Produto"><i class="fas fa-box"></i></button>
+            </div>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="main-content" id="main-content">
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menu-toggle" aria-label="Abrir/fechar menu"><i class="fas fa-bars"></i></button>
+                <nav class="breadcrumb">
+                    <a href="#dashboard" class="breadcrumb-item">Início</a>
+                    <span class="breadcrumb-divider">/</span>
+                    <span class="breadcrumb-item active" id="page-title">Dashboard</span>
+                </nav>
+            </div>
+
+            <div class="topbar-right">
+                <div class="search-container">
+                    <div class="search-box">
+                        <input type="search" placeholder="Buscar produtos, categorias..." id="global-search" autocomplete="off">
+                        <button class="search-btn" aria-label="Buscar"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+
+                <div class="quick-tools">
+                    <button class="btn-tool" id="btn-sync" title="Sincronizar dados" aria-label="Sincronizar dados"><i class="fas fa-sync-alt"></i></button>
+                    <button class="btn-tool" onclick="exportarDados()" title="Exportar backup" aria-label="Exportar backup"><i class="fas fa-download"></i></button>
+                </div>
+
+                <div class="connection-status" id="connection-status-display">
+                    <i class="fas fa-circle"></i><span>Conectando...</span>
+                </div>
+
+                <!-- User Menu -->
+                <div class="user-menu">
+                    <button class="btn-user-profile" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+                        <div class="user-avatar-small" id="user-name-short">AD</div>
+                    </button>
+                    <div class="user-dropdown" id="user-dropdown" role="menu">
+                        <div class="user-dropdown-header">
+                            <div class="user-avatar-medium"><i class="fas fa-user-shield"></i></div>
+                            <div class="user-info">
+                                <span class="user-name" id="admin-username">Administrador</span>
+                                <span class="user-role">Administrador</span>
+                            </div>
+                        </div>
+                        <div class="user-dropdown-menu">
+                            <a href="#" class="dropdown-item" onclick="abrirModalPerfil();return false;" role="menuitem"><i class="fas fa-user-edit"></i> Meu Perfil</a>
+                            <a href="#" class="dropdown-item" onclick="abrirModalConfigSite();return false;" role="menuitem"><i class="fas fa-store"></i> Dados da empresa</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item text-danger" onclick="abrirModalLogout();return false;" role="menuitem"><i class="fas fa-sign-out-alt"></i> Sair do Sistema</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-area" id="content-area">
+            <div class="page-loader"><div class="loader-spinner"></div><p>Carregando painel...</p></div>
+        </div>
+
+        <footer class="main-footer">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <p>© <span id="footer-ano">2026</span> Acrilife Admin</p>
+                    <span class="status-indicator" id="connection-status"><i class="fas fa-circle"></i><span>Conectando...</span></span>
+                </div>
+                <div class="footer-right">
+                    <span class="last-update"><i class="fas fa-history"></i><span id="last-update">Nunca atualizado</span></span>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <!-- ================================================ -->
+    <!-- MODAL PRODUTO                                      -->
+    <!-- Correção: removido botão "Upload de Todas"        -->
+    <!-- O upload ocorre automaticamente ao clicar Salvar  -->
+    <!-- ================================================ -->
+    <div class="modal" id="modal-produto" role="dialog" aria-modal="true" aria-labelledby="modal-produto-title">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="modal-produto-title">Novo Produto</h3>
+                    <button class="modal-close" data-dismiss="modal" aria-label="Fechar"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form-produto" class="form-modal" novalidate>
+                        <input type="hidden" id="produto-id" name="id">
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="produto-nome">Nome do Produto *</label>
+                                <input type="text" id="produto-nome" required placeholder="Ex: Suporte" autocomplete="off">
+                            </div>
+                            <div class="form-group">
+                                <label for="produto-codigo">Código *</label>
+                                <input type="text" id="produto-codigo" required placeholder="Ex: ACR001" autocomplete="off">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="categoria-produto">Categoria</label>
+                                <select id="categoria-produto"></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="produto-preco">Preço</label>
+                                <div class="checkbox-wrapper">
+                                    <input type="checkbox" id="produto-sob-consulta" onchange="togglePrecoInput()">
+                                    <label for="produto-sob-consulta">Preço sob consulta</label>
+                                </div>
+                                <input type="number" id="produto-preco" step="0.01" min="0" placeholder="0.00">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="produto-descricao-simples">Descrição curta <small>(aparece no card da galeria)</small></label>
+                            <input type="text" id="produto-descricao-simples" maxlength="160" placeholder="Ex: Letreiro em acrílico 5mm com LED">
+                        </div>
+
+                        <label class="switch-row" for="produto-ativo">
+                            <input type="checkbox" id="produto-ativo" checked>
+                            <span class="switch" aria-hidden="true"></span>
+                            <span><strong>Visível no site</strong><small>Desmarque para esconder o produto sem excluí-lo.</small></span>
+                        </label>
+
+                        <div class="form-group">
+                            <label>Fotos do produto</label>
+                            <div class="imagens-dropzone" id="imagens-dropzone" role="button" tabindex="0" aria-label="Adicionar fotos">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span><strong>Clique para escolher</strong> ou arraste as fotos aqui</span>
+                                <small>JPG, PNG ou WEBP até 10MB · várias de uma vez · a 1ª foto é a principal</small>
+                            </div>
+                            <input type="file" id="imagens-file-multi" accept="image/*" multiple hidden>
+                            <div id="imagens-container" class="imagens-grid"></div>
+                            <p id="imagens-vazio" class="imagens-vazio">Nenhuma foto adicionada.</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="produto-descricao">Descrição detalhada <small>(página do produto)</small></label>
+                            <textarea id="produto-descricao" rows="5" placeholder="Materiais, medidas, acabamento, prazos..."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" form="form-produto" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Salvar Produto
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CATEGORIA -->
+    <div class="modal" id="modal-categoria" role="dialog" aria-modal="true" aria-labelledby="modal-categoria-title">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="modal-categoria-title">Nova Categoria</h3>
+                    <button class="modal-close" data-dismiss="modal" aria-label="Fechar"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form-categoria" class="form-modal" novalidate>
+                        <input type="hidden" id="categoria-id">
+                        <div class="form-group">
+                            <label for="categoria-nome">Nome da Categoria *</label>
+                            <input type="text" id="categoria-nome" required autocomplete="off">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="categoria-ordem">Ordem no site</label>
+                                <input type="number" id="categoria-ordem" min="0" step="1" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="categoria-icone">Ícone</label>
+                                <div class="icon-input">
+                                    <span id="categoria-icone-preview" class="icon-preview"><i class="fas fa-box"></i></span>
+                                    <input type="text" id="categoria-icone" placeholder="fas fa-box" value="fas fa-box">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="icon-picker" aria-label="Ícones sugeridos">
+                            <button type="button" onclick="escolherIcone('fas fa-box')"><i class="fas fa-box"></i></button>
+                            <button type="button" onclick="escolherIcone('fas fa-store')"><i class="fas fa-store"></i></button>
+                            <button type="button" onclick="escolherIcone('fas fa-lightbulb')"><i class="fas fa-lightbulb"></i></button>
+                            <button type="button" onclick="escolherIcone('fas fa-sign')"><i class="fas fa-sign"></i></button>
+                            <button type="button" onclick="escolherIcone('fas fa-font')"><i class="fas fa-font"></i></button>
+                            <button type="button" onclick="escolherIcone('fas fa-trophy')"><i class="fas fa-trophy"></i></button>
+                            <button type="button" onclick="escolherIcone('fas fa-gift')"><i class="fas fa-gift"></i></button>
+                            <button type="button" onclick="escolherIcone('fas fa-palette')"><i class="fas fa-palette"></i></button>
+                            <button type="button" onclick="escolherIcone('fas fa-hashtag')"><i class="fas fa-hashtag"></i></button>
+                            <button type="button" onclick="escolherIcone('fas fa-image')"><i class="fas fa-image"></i></button>
+                            <button type="button" onclick="escolherIcone('fas fa-star')"><i class="fas fa-star"></i></button>
+                            <button type="button" onclick="escolherIcone('fas fa-glasses')"><i class="fas fa-glasses"></i></button>
+                        </div>
+                        <label class="switch-row" for="categoria-ativo">
+                            <input type="checkbox" id="categoria-ativo" checked>
+                            <span class="switch" aria-hidden="true"></span>
+                            <span><strong>Ativa</strong><small>Categorias inativas não aparecem nos filtros do site.</small></span>
+                        </label>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" form="form-categoria" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Salvar Categoria
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CONFIG SITE -->
+    <div class="modal" id="modal-config-site" role="dialog" aria-modal="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Configurações do Site</h3>
+                    <button class="modal-close" data-dismiss="modal" aria-label="Fechar"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form-config-site" class="form-modal">
+                        <div class="form-group">
+                            <label for="config-empresa-nome">Nome da empresa</label>
+                            <input type="text" id="config-empresa-nome">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="config-email">E-mail de contato</label>
+                                <input type="email" id="config-email">
+                            </div>
+                            <div class="form-group">
+                                <label for="config-telefone">Telefone</label>
+                                <input type="tel" id="config-telefone" placeholder="(11) 99999-9999">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="config-whatsapp">WhatsApp <small>(número com DDD — usado nos botões do site)</small></label>
+                            <input type="tel" id="config-whatsapp" placeholder="11 99999-9999">
+                        </div>
+                        <div class="form-group">
+                            <label for="config-endereco">Endereço</label>
+                            <input type="text" id="config-endereco">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="config-cidade">Cidade</label>
+                                <input type="text" id="config-cidade">
+                            </div>
+                            <div class="form-group">
+                                <label for="config-estado">Estado</label>
+                                <input type="text" id="config-estado">
+                            </div>
+                            <div class="form-group">
+                                <label for="config-cep">CEP</label>
+                                <input type="text" id="config-cep">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Horário de funcionamento</label>
+                            <div id="config-horarios-lista" class="horarios-lista"></div>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="addLinhaHorario()"><i class="fas fa-plus"></i> Adicionar linha</button>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="config-instagram"><i class="fab fa-instagram"></i> Instagram (link)</label>
+                                <input type="url" id="config-instagram" placeholder="https://www.instagram.com/...">
+                            </div>
+                            <div class="form-group">
+                                <label for="config-facebook"><i class="fab fa-facebook"></i> Facebook (link)</label>
+                                <input type="url" id="config-facebook" placeholder="https://www.facebook.com/...">
+                            </div>
+                        </div>
+                        <div class="form-group" id="config-banner-group">
+                            <label for="config-banner-file">Banner da página inicial</label>
+                            <img id="config-banner-preview" class="banner-preview" alt="Prévia do banner">
+                            <input type="file" id="config-banner-file" accept="image/*" onchange="selecionarBanner(this)">
+                            <small class="text-muted">Use uma foto horizontal (ex.: 1920×1080). Ela é otimizada automaticamente.</small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" form="form-config-site" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Salvar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PERFIL -->
+    <div class="modal" id="modal-perfil" role="dialog" aria-modal="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Meu Perfil</h3>
+                    <button class="modal-close" data-dismiss="modal" aria-label="Fechar"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="perfil-tabs" role="tablist">
+                        <button class="perfil-tab active" id="tab-btn-nome" role="tab" aria-selected="true" aria-controls="perfil-tab-nome" onclick="switchPerfilTab('nome')">
+                            Nome de Exibição
+                        </button>
+                        <button class="perfil-tab" id="tab-btn-senha" role="tab" aria-selected="false" aria-controls="perfil-tab-senha" onclick="switchPerfilTab('senha')">
+                            Alterar Senha
+                        </button>
+                    </div>
+
+                    <!-- Aba: Nome -->
+                    <div class="perfil-tab-content active" id="perfil-tab-nome" role="tabpanel" aria-labelledby="tab-btn-nome">
+                        <form id="form-perfil-nome" class="form-modal">
+                            <div class="form-group">
+                                <label for="perfil-nome-atual">Nome Atual</label>
+                                <input type="text" id="perfil-nome-atual" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="perfil-novo-nome">Novo Nome *</label>
+                                <input type="text" id="perfil-novo-nome" required autocomplete="off" minlength="2" maxlength="40">
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="btn-salvar-nome">
+                                <i class="fas fa-save" aria-hidden="true"></i> <span>Salvar Nome</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Aba: Senha -->
+                    <div class="perfil-tab-content" id="perfil-tab-senha" role="tabpanel" aria-labelledby="tab-btn-senha" hidden>
+
+                        <!-- Troca direta -->
+                        <div id="senha-step-aguardando">
+                            <form id="form-nova-senha" class="form-modal">
+                                <div class="form-group">
+                                    <label for="senha-atual-input">Senha atual *</label>
+                                    <input type="password" id="senha-atual-input" required autocomplete="current-password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="senha-nova-input">Nova senha *</label>
+                                    <input type="password" id="senha-nova-input" required autocomplete="new-password" oninput="avaliarForcaSenha(this.value)">
+                                </div>
+                                <div id="senha-forca-wrapper" aria-hidden="true" class="senha-forca">
+                                    <div class="senha-forca-bar"><div id="senha-forca-fill"></div></div>
+                                    <span id="senha-forca-label"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="senha-confirmar-input">Confirmar nova senha *</label>
+                                    <input type="password" id="senha-confirmar-input" required autocomplete="new-password">
+                                </div>
+                                <button type="submit" class="btn btn-primary" id="btn-confirmar-senha">
+                                    <i class="fas fa-check-circle" aria-hidden="true"></i> <span>Alterar senha</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Esqueceu a senha atual -->
+                        <div id="senha-step-solicitar" class="senha-esqueci">
+                            <p>Esqueceu a senha atual? Enviaremos um link para <strong id="senha-email-display">...</strong></p>
+                            <button type="button" class="btn btn-secondary btn-sm" id="btn-solicitar-reset" onclick="solicitarResetSenha()">
+                                <i class="fas fa-paper-plane" aria-hidden="true"></i> <span>Enviar link de redefinição</span>
+                            </button>
+                            <p id="senha-cooldown-msg" hidden class="senha-cooldown"></p>
+                        </div>
+
+                        <!-- Step 3: Sucesso -->
+                        <div id="senha-step-sucesso" hidden>
+                            <p style="color:var(--success-color,#10b981);font-weight:600;">
+                                <i class="fas fa-check-circle"></i> Senha alterada com sucesso!
+                            </p>
+                            <p style="margin-top:8px;font-size:13px;color:var(--text-secondary);">
+                                Você será desconectado automaticamente em instantes.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL LOGOUT -->
+    <div class="modal" id="modal-logout" role="dialog" aria-modal="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Sair do Sistema</h3>
+                    <button class="modal-close" data-dismiss="modal" aria-label="Fechar"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body" style="text-align:center;padding:20px;">
+                    <i class="fas fa-sign-out-alt" style="font-size:32px;color:var(--danger-color,#ef4444);margin-bottom:12px;display:block;"></i>
+                    <p>Tem certeza que deseja sair do sistema?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmarLogoutAction()">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="false"></div>
+
+    <script src="admin-script.js?v=6"></script>
+</body>
+</html>

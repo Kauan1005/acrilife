@@ -1,0 +1,38 @@
+# ============================================
+# ACRILIFE — .gitignore
+# NUNCA versione segredos ou arquivos sensíveis
+# ============================================
+
+# Variáveis de ambiente (SEGREDO MÁXIMO)
+.env
+.env.local
+.env.production
+.env.staging
+*.env
+
+# Logs e bancos locais
+*.log
+*.sql
+*.sqlite
+*.db
+
+# Dependências
+node_modules/
+vendor/
+
+# OS e editores
+.DS_Store
+Thumbs.db
+.vscode/settings.json
+*.swp
+
+# Arquivos de build
+dist/
+build/
+
+# Uploads temporários
+uploads/temp/
+
+# Backups
+*.bak
+*.backup

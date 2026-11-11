@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <!-- Google tag (gtag.js) — com Consent Mode v2: nada é rastreado antes do aceite (LGPD) -->
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', {
+        analytics_storage: 'denied', ad_storage: 'denied',
+        ad_user_data: 'denied', ad_personalization: 'denied',
+        wait_for_update: 500
+    });
+    try {
+        var c = JSON.parse(localStorage.getItem('acrilife_consentimento'));
+        if (c && c.v === 1) gtag('consent', 'update', {
+            analytics_storage: c.analytics ? 'granted' : 'denied',
+            ad_storage: c.marketing ? 'granted' : 'denied',
+            ad_user_data: c.marketing ? 'granted' : 'denied',
+            ad_personalization: c.marketing ? 'granted' : 'denied'
+        });
+    } catch (e) {}
+    gtag('js', new Date());
+    gtag('config', 'G-28GDC9K6KL');
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-28GDC9K6KL"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1e4a7e">
+    <meta name="color-scheme" content="light only">
+    <title>Detalhes do Produto - AcriLife</title>
+    <meta name="description" content="Produtos em acrílico e LED personalizados AcriLife.">
+    <meta property="og:site_name" content="AcriLife">
+    
+    <!-- Favicons (O JS preenche o href automaticamente via Supabase) -->
+    <link rel="icon" type="image/png" sizes="32x32" href="#">
+    <link rel="icon" type="image/png" sizes="16x16" href="#">
+    <link rel="apple-touch-icon" sizes="180x180" href="#">
+    
+    <!-- Estilos e Fontes -->
+    <link rel="preconnect" href="https://svirnutlsmybvvuyctak.supabase.co" crossorigin>
+    <link rel="stylesheet" href="produto-style.css?v=3">
+    <link rel="stylesheet" href="comum.css?v=4">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Scripts Principais -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js" defer></script>
+    <script src="produto-script.js?v=4" defer></script>
+    <script src="cookies.js?v=2" defer></script>
+</head>
+
+<body>
+    <!-- Header & Nav -->
+    <header>
+        <nav class="navbar">
+            <div class="container nav-container">
+                <!-- Logo -->
+                <div class="logo">
+                    <a href="index.html" class="logo-link" aria-label="AcriLife">
+                        <div id="logo-imagem-wrapper" class="logo-imagem-wrapper"></div>
+                        <div id="logo-fallback" class="logo-fallback" style="display: none;">Acri<em>Life</em></div>
+                    </a>
+                </div>
+
+                <!-- Menu e Botão Voltar -->
+                <div class="nav-right">
+                    <ul class="nav-menu">
+                        <li><a href="index.html#home">Início</a></li>
+                        <li><a href="index.html#galeria">Galeria</a></li>
+                        <li><a href="index.html#produtos">Produtos</a></li>
+                        <li><a href="index.html#sobre">Sobre</a></li>
+                        <li><a href="index.html#contato">Contato</a></li>
+                    </ul>
+                    
+                    <a href="index.html#galeria" class="btn-secondary">
+                        <i class="fas fa-arrow-left"></i> <span>Voltar à Galeria</span>
+                    </a>
+                    
+                    <button id="hamburger" class="hamburger" aria-label="Abrir menu" aria-expanded="false">
+                        <span></span><span></span><span></span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Detalhes do Produto -->
+    <main class="produto-detalhes">
+        <div class="container" id="produto-container">
+            <div class="loading-produto">
+                <div class="loading-spinner"></div>
+                <p>Carregando detalhes do produto...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Produtos Relacionados -->
+    <section class="produtos-relacionados" id="produtos-relacionados" style="display: none;">
+        <div class="container">
+            <h2>Você também pode gostar</h2>
+            <div id="relacionados-grid"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section footer-brand">
+                    <h3>AcriLife</h3>
+                    <p>Peças únicas em acrílico e LED, com qualidade premium.</p>
+                    <div id="social-links" class="social-links">
+                        <a href="#" aria-label="Facebook" target="_blank" rel="noopener"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Instagram" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="WhatsApp" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <nav class="footer-section footer-nav" aria-label="Links do rodapé">
+                    <h3>Navegação</h3>
+                    <ul>
+                        <li><a href="index.html#home">Início</a></li>
+                        <li><a href="index.html#galeria">Galeria</a></li>
+                        <li><a href="index.html#produtos">Categorias</a></li>
+                        <li><a href="index.html#sobre">Sobre</a></li>
+                        <li><a href="index.html#contato">Contato</a></li>
+                    </ul>
+                </nav>
+                <div class="footer-section">
+                    <h3>Contato</h3>
+                    <div id="footer-contato"></div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; <span id="ano-atual"></span> AcriLife · CNPJ 51.819.182/0001-68</p>
+                <ul class="footer-legal">
+                    <li><a href="privacidade.html">Política de Privacidade</a></li>
+                    <li><a href="termos.html">Termos de Uso</a></li>
+                    <li><button type="button" class="link-cookies" data-abrir-cookies>Preferências de cookies</button></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Flutuante -->
+    <a href="index.html#contato" id="whatsapp-float" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Falar no WhatsApp"><i class="fab fa-whatsapp"></i></a>
+
+</body>
+</html>

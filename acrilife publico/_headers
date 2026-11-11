@@ -1,0 +1,15 @@
+# Netlify — cabeçalhos do site público (substitui o .htaccess, que o Netlify ignora)
+/*
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://svirnutlsmybvvuyctak.supabase.co https://*.google-analytics.com https://*.googletagmanager.com https://*.doubleclick.net https://*.google.com https://pagead2.googlesyndication.com https://*.googleadservices.com; connect-src 'self' https://svirnutlsmybvvuyctak.supabase.co wss://svirnutlsmybvvuyctak.supabase.co https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.doubleclick.net https://*.google.com https://pagead2.googlesyndication.com https://*.googleadservices.com; frame-src https://www.googletagmanager.com https://*.doubleclick.net; frame-ancestors 'self'; base-uri 'self'
+
+/*.css
+  Cache-Control: public, max-age=604800
+/*.js
+  Cache-Control: public, max-age=604800
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate

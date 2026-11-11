@@ -1,0 +1,18 @@
+# Anotações internas
+MELHORIAS.md
+
+# Configuração local do Netlify e do editor
+.netlify/
+.vscode/
+
+# Cópia antiga, código sem uso e arquivos que o Netlify ignora
+acrilife publico/acrilife publico/
+acrilife publico/data-manager.js
+api/
+**/.htaccess
+
+# Segredos
+.env
+.env.*
+*.env
+**/.env.exemple

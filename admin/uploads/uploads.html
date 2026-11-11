@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="only light">
+    <title>Acrilife — Upload de Imagens</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- ✅ ORDEM CORRETA: SDK → config → auth-guard -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+    <script src="../config.js?v=5"></script>
+    <script src="../auth-guard.js?v=6"></script>
+
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        /* body começa oculto E invisível — dupla camada de proteção */
+        body{
+            font-family:'Montserrat',sans-serif;
+            background:#f4f4f8;
+            min-height:100vh;
+            padding:40px 20px;
+            display:none;
+            visibility:hidden;
+        }
+        body.auth-ok{
+            display:block;
+            visibility:visible;
+        }
+        .container{max-width:900px;margin:0 auto}
+        h1{font-size:1.8em;margin-bottom:24px;color:#333}
+        .auth-notice{background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:16px;margin-bottom:24px;font-size:14px;color:#856404}
+        .upload-area{border:2px dashed #ccc;border-radius:12px;padding:40px;text-align:center;background:#fff;cursor:pointer;margin-bottom:20px;transition:border-color .2s}
+        .upload-area:hover{border-color:#667eea}
+        .upload-area input[type=file]{display:none}
+        .btn{padding:12px 24px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+        .btn-primary{background:#667eea;color:#fff}
+        .btn-primary:hover{background:#5a6fd6}
+        .btn-primary:disabled{opacity:.5;cursor:not-allowed}
+        .btn-secondary{background:#6c757d;color:#fff;margin-left:8px}
+        .preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;margin-top:20px}
+        .preview-item{position:relative;border-radius:8px;overflow:hidden;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.1)}
+        .preview-item img{width:100%;height:140px;object-fit:cover}
+        .preview-item .status{position:absolute;bottom:0;left:0;right:0;padding:6px;text-align:center;font-size:12px;font-weight:600}
+        .status.pending{background:#ffc107;color:#333}
+        .status.uploading{background:#17a2b8;color:#fff}
+        .status.success{background:#28a745;color:#fff}
+        .status.error{background:#dc3545;color:#fff}
+        .remove-btn{position:absolute;top:6px;right:6px;width:28px;height:28px;background:#dc3545;color:#fff;border:none;border-radius:50%;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center}
+        .url-list{margin-top:24px;background:#fff;border-radius:8px;padding:16px;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+        .url-item{padding:10px;border-bottom:1px solid #eee;font-size:13px;word-break:break-all;display:flex;align-items:center;justify-content:space-between;gap:10px}
+        .url-item:last-child{border-bottom:none}
+        .copy-btn{background:none;border:none;color:#667eea;cursor:pointer;font-size:16px}
+        .toast{position:fixed;top:20px;right:20px;background:#333;color:#fff;padding:12px 20px;border-radius:8px;font-size:14px;z-index:9999;animation:slideIn .3s ease}
+        @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-cloud-upload-alt"></i> Upload de Imagens</h1>
+
+        <div class="auth-notice">
+            <i class="fas fa-shield-alt"></i>
+            <strong>Área restrita</strong> — apenas administradores autenticados podem fazer upload.
+        </div>
+
+        <!-- Upload area -->
+        <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
+            <i class="fas fa-cloud-upload-alt" style="font-size:48px;color:#ccc;display:block;margin-bottom:12px"></i>
+            <h3 style="margin-bottom:6px;color:#333">Clique ou arraste imagens aqui</h3>
+            <p style="color:#666;font-size:14px">JPG, PNG, WEBP — máx. 10MB por arquivo</p>
+            <input type="file" id="file-input" multiple accept="image/jpeg,image/jpg,image/png,image/webp">
+        </div>
+
+        <div class="preview-grid" id="preview-grid"></div>
+
+        <div style="margin-top:16px">
+            <button class="btn btn-primary" id="btn-upload" onclick="iniciarUpload()" disabled>
+                <i class="fas fa-upload"></i> Iniciar Upload
+            </button>
+            <button class="btn btn-secondary" id="btn-clear" onclick="limparSelecao()" disabled>
+                <i class="fas fa-trash"></i> Limpar
+            </button>
+            <button class="btn btn-secondary" onclick="window.location.href='index.html'" style="margin-left:8px">
+                <i class="fas fa-arrow-left"></i> Voltar ao painel
+            </button>
+        </div>
+
+        <div class="url-list" id="url-list" style="display:none">
+            <h4 style="margin-bottom:12px"><i class="fas fa-link"></i> URLs geradas</h4>
+            <div id="url-items"></div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script>
+    // ── Estado ──────────────────────────────────────────────────────
+    let sb = null;
+    let arquivos = [];
+    let urlsGeradas = [];
+
+    // ── Auth guard — bloqueia a página inteiramente se não admin ────
+    document.addEventListener('DOMContentLoaded', async () => {
+        // ✅ guardAdminPage() valida sessão Supabase + role admin (server-side)
+        const ok = await guardAdminPage();
+        if (!ok) return; // auth-guard.js redireciona para login.html
+
+        // Libera o body apenas após confirmação server-side de admin
+        document.body.classList.add('auth-ok');
+        document.body.style.removeProperty('visibility'); // garante que inline style não sobrescreva CSS
+
+        // Usa o cliente autenticado criado pelo auth-guard.js
+        sb = window._supabaseClient;
+
+        // Configura drag & drop
+        const area = document.getElementById('upload-area');
+        area.addEventListener('dragover', e => { e.preventDefault(); area.style.borderColor='#667eea'; });
+        area.addEventListener('dragleave', () => area.style.borderColor='#ccc');
+        area.addEventListener('drop', e => {
+            e.preventDefault(); area.style.borderColor='#ccc';
+            handleFiles(e.dataTransfer.files);
+        });
+        document.getElementById('file-input').addEventListener('change', e => handleFiles(e.target.files));
+    });
+
+    // ── Upload ───────────────────────────────────────────────────────
+    function handleFiles(files) {
+        arquivos = Array.from(files);
+        renderPreviews();
+        document.getElementById('btn-upload').disabled = false;
+        document.getElementById('btn-clear').disabled = false;
+    }
+
+    function renderPreviews() {
+        const grid = document.getElementById('preview-grid');
+        grid.innerHTML = '';
+        arquivos.forEach((f, i) => {
+            const r = new FileReader();
+            r.onload = ev => {
+                const div = document.createElement('div');
+                div.className = 'preview-item';
+                div.dataset.index = i;
+                div.innerHTML = `<img src="${ev.target.result}" alt="preview">
+                    <button class="remove-btn" onclick="removerArquivo(${i})"><i class="fas fa-times"></i></button>
+                    <div class="status pending">Aguardando</div>`;
+                grid.appendChild(div);
+            };
+            r.readAsDataURL(f);
+        });
+    }
+
+    function removerArquivo(i) {
+        arquivos.splice(i, 1);
+        renderPreviews();
+        if (!arquivos.length) {
+            document.getElementById('btn-upload').disabled = true;
+            document.getElementById('btn-clear').disabled = true;
+        }
+    }
+
+    function limparSelecao() {
+        arquivos = [];
+        document.getElementById('preview-grid').innerHTML = '';
+        document.getElementById('file-input').value = '';
+        document.getElementById('btn-upload').disabled = true;
+        document.getElementById('btn-clear').disabled = true;
+        toast('Seleção limpa', 'info');
+    }
+
+    async function iniciarUpload() {
+        if (!arquivos.length) return;
+        if (!sb) { toast('Não autenticado', 'error'); return; }
+
+        document.getElementById('btn-upload').disabled = true;
+        document.getElementById('btn-clear').disabled = true;
+
+        for (let i = 0; i < arquivos.length; i++) {
+            const f = arquivos[i];
+            const statusEl = document.querySelector(`.preview-item[data-index="${i}"] .status`);
+            if (statusEl) { statusEl.textContent = 'Enviando…'; statusEl.className = 'status uploading'; }
+
+            try {
+                if (!f.type.startsWith('image/')) throw new Error('Não é imagem');
+                if (f.size > 10 * 1024 * 1024) throw new Error('Arquivo > 10MB');
+
+                const ext = f.name.split('.').pop().toLowerCase() || 'jpg';
+                const path = `uploads/${Date.now()}_${Math.random().toString(36).slice(2,8)}.${ext}`;
+
+                const { error } = await sb.storage
+                    .from('imagens')
+                    .upload(path, f, { cacheControl: '3600', upsert: false, contentType: f.type });
+                if (error) throw error;
+
+                const { data: { publicUrl } } = sb.storage.from('imagens').getPublicUrl(path);
+                urlsGeradas.push({ nome: f.name, url: publicUrl });
+
+                if (statusEl) { statusEl.textContent = '✓ OK'; statusEl.className = 'status success'; }
+            } catch (err) {
+                if (statusEl) { statusEl.textContent = '✗ Erro'; statusEl.className = 'status error'; }
+                toast(`Erro: ${err.message}`, 'error');
+            }
+        }
+
+        renderUrls();
+        document.getElementById('btn-clear').disabled = false;
+        toast(`${urlsGeradas.length} imagem(ns) enviada(s)!`, 'success');
+    }
+
+    function renderUrls() {
+        const box = document.getElementById('url-list');
+        const list = document.getElementById('url-items');
+        if (!urlsGeradas.length) return;
+        list.innerHTML = urlsGeradas.map(u => `
+            <div class="url-item">
+                <div><strong style="display:block;margin-bottom:4px">${u.nome}</strong>${u.url}</div>
+                <button class="copy-btn" onclick="navigator.clipboard.writeText('${u.url}').then(()=>toast('Copiado!','success'))" title="Copiar URL">
+                    <i class="fas fa-copy"></i>
+                </button>
+            </div>`).join('');
+        box.style.display = 'block';
+    }
+
+    // ── Toast ────────────────────────────────────────────────────────
+    function toast(msg, type='info') {
+        const colors = {success:'#28a745',error:'#dc3545',info:'#17a2b8',warning:'#ffc107'};
+        const t = document.createElement('div');
+        t.className = 'toast';
+        t.style.borderLeft = `4px solid ${colors[type]||colors.info}`;
+        t.textContent = msg;
+        document.getElementById('toast-container').appendChild(t);
+        setTimeout(() => t.remove(), 4000);
+    }
+    </script>
+</body>
+</html>
