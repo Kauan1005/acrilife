@@ -64,4 +64,4 @@ Consent Mode v2
 
 ---
 
-Kauan Ribeiro Almeida · [portfólio](https://kauanportfolio.netlify.app) · [LinkedIn](https://www.linkedin.com/in/kauan-ribeiro)
+Kauan Ribeiro Almeida · [portfólio](https://ribeiroportfolio.netlify.app) · [LinkedIn](https://www.linkedin.com/in/kauan-ribeiro)
